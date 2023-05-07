@@ -42,5 +42,30 @@ FROM (
   ORDER BY total_duration
 ) as total_durations;
 
-SELECT id, name, day, chapter
+SELECT assignments.id, name, day, chapter, count(assistance_requests) as total_requests
 FROM assignments
+JOIN assistance_requests ON assignments.id = assignment_id
+GROUP BY assignments.id
+ORDER BY total_requests DESC;
+
+SELECT day, count(*) as number_of_assignments, sum(duration) as duration
+FROM assignments
+GROUP BY day
+ORDER BY day;
+
+SELECT DISTINCT teachers.name as teacher, cohorts.name as cohort
+FROM teachers
+JOIN assistance_requests ON teacher_id = teachers.id
+JOIN students ON student_id = students.id
+JOIN cohorts ON cohort_id = cohorts.id
+WHERE cohorts.name = 'JUL02'
+ORDER BY teacher;
+
+SELECT teachers.name as teacher, cohorts.name as cohort, count(assistance_requests) as total_assistances
+FROM teachers
+JOIN assistance_requests ON teacher_id = teachers.id
+JOIN students ON student_id = students.id
+JOIN cohorts ON cohort_id = cohorts.id
+WHERE cohorts.name = 'JUL02'
+GROUP BY teachers.name, cohorts.name
+ORDER BY teacher;
