@@ -8,8 +8,8 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
     "pg": "^8.10.0"
-  }
+  },
+  "description": ""
 }

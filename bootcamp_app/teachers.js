@@ -20,21 +20,20 @@ const client = new Client(config);
 client.connect();
 
 const cohortName = process.argv[2];
-const limit = process.argv[3] || 5;
-const values = [`%${cohortName}%`, limit];
+const values = [`%${cohortName}%`];
 
-const queryString =
+const queryString = `
+SELECT DISTINCT teachers.name as teacher, cohorts.name as cohort
+FROM teachers
+JOIN assistance_requests ON teacher_id = teachers.id
+JOIN students ON student_id = students.id
+JOIN cohorts ON cohort_id = cohorts.id
+WHERE cohorts.name = '${cohortName || 'JUL02'}'
+ORDER BY teacher;
 `
-  SELECT students.id as student_id, students.name as name, cohorts.name as cohort
-  FROM students
-  JOIN cohorts ON cohorts.id = cohort_id
-  WHERE cohorts.name LIKE '%${cohortName}%'
-  LIMIT '%${limit}%';
-  `
 pool.query(queryString, values);
-
 .then(res => {
-  res.rows.forEach(user => {
-    console.log(`${user.name} has an id of ${user.student_id} and was in the ${user.cohort} cohort`);
+  res.rows.forEach(row => {
+    console.log(`${row.cohort}: ${row.teacher}`);
   })
-}).catch(err => console.error('query error', err.stack));
+});
